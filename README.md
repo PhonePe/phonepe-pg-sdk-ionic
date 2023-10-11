@@ -7,7 +7,7 @@ A Ionic Sample App to integrate PhonePe PG SDK in your project
 npm i --f
 ```
 
-# Build the Ionic App to test the plugin in android and iOS apps.
+# Build the Ionic App to test the plugin in android and iOS apps
 
 ```
 npm run build
