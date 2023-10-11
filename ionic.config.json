@@ -1,0 +1,7 @@
+{
+  "name": "phonepe payment capacitor example",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
