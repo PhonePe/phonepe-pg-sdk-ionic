@@ -55,7 +55,6 @@ const App = () => {
   const [base64, setbase64] = useState('');
   const [checksum, setchecksum] = useState('');
   const [selectedOption, setSelectedOption] = useState('');
-  const [transactionOption, setTransactionOption] = useState('');
   const [isChecked, setIsChecked] = useState(false);
 
   const handleAddHeader = () => {
@@ -70,10 +69,6 @@ const App = () => {
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
-  };
-
-  const handleTransactionOptionChange = (e: any) => {
-    setTransactionOption(e.detail.value);
   };
 
   const handleOptionChange = (e: any) => {
@@ -108,32 +103,13 @@ const App = () => {
   const handlePackageNameChange = (e: any) => {
     setPackageName(e.detail.value);
   };
-  
 
   const handleStartTransaction = async () => {
-      if (transactionOption == 'Container') {
-        console.log('Container Flow -' + headers);
-        await PhonePePaymentPlugin.startContainerTransaction( {
+        await PhonePePaymentPlugin.startTransaction({
           body: base64,
           checksum: checksum,
-          apiEndPoint: '/v4/debit', // api end point
-          headers: {'X-CALLBACK-URL': 'https://enjfktbm7ajrh.x.pipedream.net/'}, // TODO: Remove the header after testing
-          callBackURL: 'ionicDemoApp'
-        }).then(a => {
-          console.log('VS: '+ JSON.stringify(a));
-          setMessage(JSON.stringify(a));
-        }).catch(error => {
-          console.log('VS: error:'+ error.message);
-          setMessage("error:" + error.message);
-        })
-      } else {       
-        await PhonePePaymentPlugin.startPGTransaction({
-          body: base64,
-          checksum: checksum,
-          apiEndPoint: '/pg/v1/pay', // api end point
-          headers: {'Content-Type': 'application/json'},
           packageName: packageName, // Package name
-          callBackURL: 'ionicDemoApp'
+          appSchema: 'ionicDemoApp'
         }).then(a => {
           console.log('VS: '+ JSON.stringify(a));
           setMessage(JSON.stringify(a));
@@ -141,8 +117,6 @@ const App = () => {
           console.log('VS: error:'+ error.message);
           setMessage("error:" + error.message);
         })
-
-      }
   };
 
   const initPhonePeSDK = () => {
@@ -243,14 +217,13 @@ const App = () => {
     </IonItem>
 
     <IonItem>
-      <IonLabel>Set the Environment:</IonLabel>
+      <IonLabel>Set Environment:</IonLabel>
       <IonSelect
         value={selectedOption}
         onIonChange={handleOptionChange}
-        interface="popover" // To make the select box look better
+        interface="popover" 
       >
-        <IonSelectOption value="UAT_SIM">UAT_SIM</IonSelectOption>
-        <IonSelectOption value="UAT">UAT</IonSelectOption>
+        <IonSelectOption value="SANDBOX">SANDBOX</IonSelectOption>
         <IonSelectOption value="PRODUCTION">PRODUCTION</IonSelectOption>
       </IonSelect>
     </IonItem>
@@ -285,18 +258,6 @@ const App = () => {
         value={checksum}
         onIonChange={handleChecksumChange}
       />
-    </IonItem>
-
-    <IonItem>
-      <IonLabel>Select the transaction type:</IonLabel>
-      <IonSelect
-        value={transactionOption}
-        onIonChange={handleTransactionOptionChange}
-        interface="popover"
-      >
-        <IonSelectOption value="PG">PG</IonSelectOption>
-        <IonSelectOption value="Container">Container</IonSelectOption>
-      </IonSelect>
     </IonItem>
   </IonList>
 
