@@ -1,35 +1,26 @@
-# PhonePe PG SDK Ionic
-A Ionic Sample App to integrate PhonePe PG SDK in your project 
+# Sample App
+Sample App to demonstrate the integration of PhonePe PG SDK ionic package.
 
-# Getting Started
+To know about the integration steps, please visit the Dev Docs : [PhonePe Developer Docs](https://developer.phonepe.com/v1/docs/ionic-sdk-integration-standard).
 
+> [!NOTE]
+> Please get in touch with the ```PhonePe integration team``` (merchant-integration@phonepe.com) to get your secret keys and to know about how to use this app.
+
+> [!WARNING]  
+> Without valid input this sample app will not work.
+
+Pull dependencies from NPM:
 ```
 npm i --f
-```
-
-### Build the Ionic App to test the plugin in android and iOS apps
-
-```
 npm run build
 ```
 
-### Run the Ionic App
-
+To run on iOS:
 ```
-npx cap run ios // for iOS
-npx cap run android // for android
+npx cap run ios
 ```
 
-### Integration Doc : 
-https://developer.phonepe.com/v1/docs/ionic-sdk-integration
-
-Please refer the above doc for step by step integration.
-
-
-> [!NOTE]
-> To run the sample app, you must add your encrypted keys. Please get in touch with the ```PhonePe integration team```(merchant-integration@phonepe.com) to generate your credentials for testing the payment flow.
-
-> [!WARNING]
-> Without valid credentials this sample app wouldn't work.
-
-
+To run on Android:
+```
+npx cap run android
+```
