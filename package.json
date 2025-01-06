@@ -1,7 +1,7 @@
 {
   "name": "phonepe-payment-capacitor-example",
   "private": true,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -24,7 +24,6 @@
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
     "ionicons": "^7.0.0",
-    "phonepe-payment-capacitor": "https://phonepe.mycloudrepo.io/public/repositories/phonepe-mobile-capacitor-sdk/releases/v2/phonepe-payment-capacitor.tgz",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^5.3.4",
