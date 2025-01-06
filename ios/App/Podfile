@@ -15,7 +15,7 @@ def capacitor_pods
   pod 'CapacitorHaptics', :path => '../../node_modules/@capacitor/haptics'
   pod 'CapacitorKeyboard', :path => '../../node_modules/@capacitor/keyboard'
   pod 'CapacitorStatusBar', :path => '../../node_modules/@capacitor/status-bar'
-  pod 'PhonepePaymentCapacitor', :path => '../../node_modules/phonepe-payment-capacitor'
+  pod 'IonicCapacitorPhonepePg', :path => '../../node_modules/ionic-capacitor-phonepe-pg'
 end
 
 target 'App' do

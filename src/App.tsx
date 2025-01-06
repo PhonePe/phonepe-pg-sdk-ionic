@@ -1,6 +1,6 @@
 import { IonApp, setupIonicReact } from '@ionic/react';
 import { useState } from 'react';
-import { PhonePePaymentPlugin } from 'phonepe-payment-capacitor';
+import { PhonePePaymentPlugin } from 'ionic-capacitor-phonepe-pg';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -28,8 +28,6 @@ import {
   IonSelect,
   IonSelectOption,
   IonCheckbox,
-  IonRow,
-  IonCol,
   IonInput, 
   IonItem, 
   IonList
@@ -43,29 +41,17 @@ setupIonicReact();
 
 const App = () => {
 
-  const [packageName, setPackageName] = useState<string>('');
-  const [headers, setHeaders] = useState<any>({});
-  const [headerKey, setHeaderKey] = useState<string>('');
-  const [headerValue, setHeaderValue] = useState<string>('');
-
   const [message, setMessage] = useState<string>('Message: ');
 
-  const [appId, setAppId] = useState('');
   const [merchantId, setMerchantId] = useState('');
-  const [base64, setbase64] = useState('');
-  const [checksum, setchecksum] = useState('');
+  const [request, setRequest] = useState('');
   const [selectedOption, setSelectedOption] = useState('');
   const [isChecked, setIsChecked] = useState(false);
+  const [flowId, setFlowId] = useState('');
 
-  const handleAddHeader = () => {
-    setHeaders({
-      ...headers,
-      [headerKey]: headerValue
-    })
-    setHeaderKey("");
-    setHeaderValue("");
+  const handleFlowIdChange = (e: any) => {
+    setFlowId(e.detail.value);
   };
-
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
@@ -75,21 +61,12 @@ const App = () => {
     setSelectedOption(e.detail.value);
   };
 
-
-  const handleAppIdChange = (e: any) => {
-    setAppId(e.detail.value);
-  };
-  
   const handleMerchantIdChange = (e: any) => {
     setMerchantId(e.detail.value);
   };
 
-  const handleBase64Change = (e: any) => {
-    setbase64(e.detail.value);
-  };
-
-  const handleChecksumChange = (e: any) => {
-    setchecksum(e.detail.value);
+  const handelRequestChange = (e: any) => {
+    setRequest(e.detail.value);
   };
 
   const initSDK = () => {
@@ -100,16 +77,10 @@ const App = () => {
       handleStartTransaction();
   }
 
-  const handlePackageNameChange = (e: any) => {
-    setPackageName(e.detail.value);
-  };
-
   const handleStartTransaction = async () => {
         await PhonePePaymentPlugin.startTransaction({
-          body: base64,
-          checksum: checksum,
-          packageName: packageName, // Package name
-          appSchema: 'ionicDemoApp'
+          request: request,
+          appSchema: 'ionicDemoApp',
         }).then(a => {
           console.log('VS: '+ JSON.stringify(a));
           setMessage(JSON.stringify(a));
@@ -122,12 +93,11 @@ const App = () => {
   const initPhonePeSDK = () => {
     console.log(selectedOption,
       merchantId,
-      appId,
       isChecked);
     PhonePePaymentPlugin.init({
       environment: selectedOption,
       merchantId: merchantId,
-      appId: appId,
+      flowId: flowId,
       enableLogging: isChecked
     }).then(result => {
       console.log('VS: '+ JSON.stringify(result));
@@ -138,56 +108,30 @@ const App = () => {
     })
   };
 
-
-  const handleIsPhonePeAppInstalled = () => {
-    PhonePePaymentPlugin.isPhonePeInstalled().then(a => {
-      console.log('VS: '+ JSON.stringify(a));
-      setMessage("Message: PhonePe App Installed" + JSON.stringify(a))
-    }).catch(error => {
-      console.log('VS: error:'+ error.message);
-      setMessage("error:" + error.message);
-    })
-  };
-
-  const handleIsGPayAppInstalled = () => {
-    PhonePePaymentPlugin.isGpayInstalled().then(a => {
-      console.log('VS: '+ JSON.stringify(a));
-      setMessage("Message: Gpay App Installed - "+ JSON.stringify(a));
-    }).catch(error => {
-      console.log('VS: error:'+ error.message);
-      setMessage("error:" + error.message);
-    })
-  };
-
-  const handleIsPaytmInstalled = () => {
-    PhonePePaymentPlugin.isPaytmInstalled().then(a => {
-      console.log('VS: '+ JSON.stringify(a));
-      setMessage("Message: Paytm App Installed - "+ JSON.stringify(a));
-    }).catch(error => {
-      console.log('VS: error:'+ error.message);
-      setMessage("error:" + error.message);
-    })
-  };
-
-  const getPackageSignatureForAndroid = () => {
-    if (Capacitor.getPlatform() === 'android') {
-      PhonePePaymentPlugin.getPackageSignatureForAndroid().then(result => {
-        setMessage(JSON.stringify(result['status']));
-      }).catch(error => {
-        setMessage("error:" + error.message);
-      })
+  const getUpiApps = () => {
+    if (Capacitor.getPlatform() === 'android') { 
+        getUpiAppsForAndroid();
+    } else {
+        getUpiAppsForIos();
     }
-  };
+  }
 
   const getUpiAppsForAndroid = () => {
-    if (Capacitor.getPlatform() === 'android') {
       PhonePePaymentPlugin.getUpiAppsForAndroid().then(result => {
         if (result['status'] != null)
           setMessage(JSON.stringify(JSON.parse(result['status'])));
       }).catch(error => {
         setMessage("error:" + error.message);
       })
-    }
+  };
+
+  const getUpiAppsForIos = () => {
+      PhonePePaymentPlugin.getUpiAppsForIos().then(result => {
+        if (result['status'] != null)
+          setMessage(JSON.stringify(result['status']));
+      }).catch(error => {
+        setMessage("error:" + error.message);
+      })
   };
 
   return (
@@ -200,11 +144,11 @@ const App = () => {
       <IonContent className="ion-padding">
   <IonList>
     <IonItem>
-      <IonLabel position="floating">App Id</IonLabel>
+      <IonLabel position="floating">Flow Id</IonLabel>
       <IonInput
         type="text"
-        value={appId}
-        onIonChange={handleAppIdChange}
+        value={flowId}
+        onIonChange={handleFlowIdChange}
       />
     </IonItem>
     <IonItem>
@@ -244,72 +188,24 @@ const App = () => {
 
   <IonList>
     <IonItem>
-      <IonLabel position="floating">Base 64 request</IonLabel>
+      <IonLabel position="floating">Request Json</IonLabel>
       <IonInput
         type="text"
-        value={base64}
-        onIonChange={handleBase64Change}
-      />
-    </IonItem>
-    <IonItem>
-      <IonLabel position="floating">Checksum</IonLabel>
-      <IonInput
-        type="text"
-        value={checksum}
-        onIonChange={handleChecksumChange}
+        value={request}
+        onIonChange={handelRequestChange}
       />
     </IonItem>
   </IonList>
 
-{ Capacitor.getPlatform() == 'android' &&
-  <IonItem>
-      <IonLabel position="floating">Package Name:</IonLabel>
-      <IonInput
-        type="text"
-        value={packageName}
-        onIonChange={handlePackageNameChange}
-      />
-  </IonItem>
-}
-
-  <IonButton expand="full" onClick={startTransaction}>
-    Start Transaction
-  </IonButton>
+  <IonButton expand="full" onClick={ startTransaction }>
+        Start Transaction
+      </IonButton>
 
   <IonLabel className="ion-padding">Check Installed Apps:</IonLabel>
 
-  <IonRow className="ion-padding">
-    <IonCol size="4">
-      <IonButton expand="full" onClick={handleIsPhonePeAppInstalled}>
-        PhonePe
+  <IonButton expand="full" onClick={ getUpiApps }>
+        Get UPI Apps
       </IonButton>
-    </IonCol>
-    <IonCol size="4">
-      <IonButton expand="full" onClick={handleIsGPayAppInstalled}>
-        GPay
-      </IonButton>
-    </IonCol>
-    <IonCol size="4">
-      <IonButton expand="full" onClick={handleIsPaytmInstalled}>
-        Paytm
-      </IonButton>
-    </IonCol>
-  </IonRow>
-
-{ Capacitor.getPlatform() == 'android' &&
-  <IonRow className="ion-padding">
-    <IonCol size="6">
-      <IonButton expand="full" onClick={getPackageSignatureForAndroid}>
-        Package Signature
-      </IonButton>
-    </IonCol>
-    <IonCol size="6">
-      <IonButton expand="full" onClick={getUpiAppsForAndroid}>
-        UPI Apps
-      </IonButton>
-    </IonCol>
-  </IonRow>
-}
 
   <IonLabel>{message}</IonLabel>
 </IonContent>

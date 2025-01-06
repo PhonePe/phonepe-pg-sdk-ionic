@@ -11,6 +11,7 @@ To know about the integration steps, please visit the Dev Docs : [PhonePe Develo
 
 Pull dependencies from NPM:
 ```
+npm i ionic-capacitor-phonepe-pg -f
 npm i --f
 npm run build
 ```
